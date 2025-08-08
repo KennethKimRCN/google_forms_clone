@@ -1,0 +1,65 @@
+<!-- templates/results.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 95%;
+            margin: 20px auto;
+        }
+        th, td {
+            border: 1px solid #999;
+            padding: 10px;
+            text-align: left;
+            vertical-align: top;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        th {
+            background-color: #eee;
+        }
+        .container {
+            text-align: center;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align:center;">All Responses</h1>
+    <div class="container">
+        <a href="{{ url_for('export_csv') }}"><button>Export to CSV</button></a>
+        <p><a href="{{ url_for('form') }}">Back to Form</a> | <a href="{{ url_for('index') }}">Admin Upload</a></p>
+    </div>
+
+    {% for group in grouped_responses %}
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    {% for col in group.columns %}
+                        <th>{{ col }}</th>
+                    {% endfor %}
+                    <th>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in group.responses %}
+                <tr>
+                    <td>{{ r.id }}</td>
+                    {% for col in group.columns %}
+                        <td>{{ r.answers.get(col, '-') }}</td>
+                    {% endfor %}
+                    <td>{{ r.timestamp }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <br><br>
+    {% endfor %}
+</body>
+
+</html>

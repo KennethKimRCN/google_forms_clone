@@ -1,0 +1,17 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Upload</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Upload CSV File</h1>
+    <form action="/admin" method="POST" enctype="multipart/form-data">
+        <input type="file" name="csv_file" required>
+        <button type="submit">Upload</button>
+    </form>
+    <p><a href="{{ url_for('form') }}">Go to Form</a> | <a href="{{ url_for('results') }}">View Results</a></p>
+</body>
+</html>

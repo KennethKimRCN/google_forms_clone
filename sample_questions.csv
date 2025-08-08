@@ -1,0 +1,4 @@
+What is your name?,text
+How old are you?,number
+Do you like Python?,radio
+Do you like programming?,radio
