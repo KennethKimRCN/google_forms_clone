@@ -1,4 +1,3 @@
-<!-- templates/form.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,26 +6,159 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <p><a href="{{ url_for('index') }}">Admin Upload</a> | <a href="{{ url_for('results') }}">View Results</a></p>
-    <h1>YKO Solution Tool Box Meeting</h1>
-    <form method="POST">
+
+<p><a href="{{ url_for('index') }}">Admin Upload</a> | <a href="{{ url_for('results') }}">View Results</a></p>
+<h1>YKO Solution Tool Box Meeting</h1>
+
+<div class="questionnaire-wrapper">
+    <div class="video-container">
+        <iframe src="https://www.youtube.com/embed/1u4vLnClKE8"
+                title="YouTube video player" frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen></iframe>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data" id="mainForm">
         {% for q in questions %}
             <div class="form-group">
-                <label>{{ q[1] }}</label>
-                {% if q[2] == 'text' %}
+                {% if q[1].startswith('종이로 출력 후 TBM을 실시하였다면 TBM 시트를 SCAN 또는 촬영 후 사진을 Upload해 주십시오. (이 경우 하시 1~9번은 Check하지 않아도 됩니다)') %}
+                    <label>{{ q[1] }}</label>
+                    <input type="file" name="q_{{ q[0] }}" accept="image/*" id="upload_image">
+
+                {% elif q[1].startswith('12. 위 사실과 다름 없음을 선언합니다') %}
+                <label style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+                    <span>{{ q[1] }}</span>
+                    <span>
+                        <input type="checkbox" name="q_{{ q[0] }}" value="Checked" required>
+                        동의
+                    </span>
+                </label>
+
+                {% elif q[2] == 'text' %}
+                    <label>{{ q[1] }}</label>
                     <input type="text" name="q_{{ q[0] }}" required>
+
                 {% elif q[2] == 'number' %}
+                    <label>{{ q[1] }}</label>
                     <input type="number" name="q_{{ q[0] }}" required>
+
                 {% elif q[2] == 'radio' %}
-                    <input type="radio" name="q_{{ q[0] }}" value="Yes" required> Yes
-                    <input type="radio" name="q_{{ q[0] }}" value="No"> No
+                    <div class="form-group radio-group">
+                        <label>{{ q[1] }}</label>
+                        <label><input type="radio" name="q_{{ q[0] }}" value="예" class="conditional-radio"> 예</label>
+                        <label><input type="radio" name="q_{{ q[0] }}" value="아니오" class="conditional-radio"> 아니오</label>
+                    </div>
+
                 {% else %}
+                    <label>{{ q[1] }}</label>
                     <input type="text" name="q_{{ q[0] }}">
                 {% endif %}
             </div>
         {% endfor %}
+
         <button type="submit">Submit</button>
     </form>
-    
+</div>
+
+<!-- Success Modal -->
+<div id="successModal" class="modal">
+    <div class="modal-content">
+        <h2>✅ 제출이 완료되었습니다!</h2>
+        <p>감사합니다. 양식을 성공적으로 제출하였습니다.</p>
+        <div class="success-links">
+            <button onclick="resetForm()">다시 제출하기</button>
+            <a href="{{ url_for('results') }}"><button>결과 보기</button></a>
+        </div>
+    </div>
+</div>
+
+<style>
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+.modal-content {
+    background-color: #fff;
+    margin: 15% auto;
+    padding: 20px;
+    width: 90%;
+    max-width: 500px;
+    border-radius: 10px;
+    text-align: center;
+}
+.success-links button {
+    margin: 10px;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('mainForm');
+    const modal = document.getElementById('successModal');
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(form);
+
+        fetch("{{ url_for('form') }}", {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => { throw new Error(text) });
+            }
+            return response.text();
+        })
+        .then(data => {
+            if (data.trim() === "success") {
+                modal.style.display = 'block';
+            } else {
+                alert("Unexpected response: " + data);
+            }
+        })
+        .catch(error => {
+            alert("제출 중 오류가 발생했습니다:\n" + error.message);
+        });
+    });
+
+    const uploadInput = document.getElementById('upload_image');
+    const radios = document.querySelectorAll('.conditional-radio');
+
+    function toggleRadioRequired() {
+        if (uploadInput && uploadInput.files.length > 0) {
+            radios.forEach(radio => {
+                radio.required = false;
+            });
+        } else {
+            let seenNames = new Set();
+            radios.forEach(radio => {
+                if (!seenNames.has(radio.name)) {
+                    radio.required = true;
+                    seenNames.add(radio.name);
+                } else {
+                    radio.required = false;
+                }
+            });
+        }
+    }
+
+    if (uploadInput) {
+        uploadInput.addEventListener('change', toggleRadioRequired);
+        toggleRadioRequired();
+    }
+});
+
+function resetForm() {
+    document.getElementById('mainForm').reset();
+    document.getElementById('successModal').style.display = 'none';
+}
+</script>
+
 </body>
 </html>

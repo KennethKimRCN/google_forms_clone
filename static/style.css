@@ -1,167 +1,324 @@
-/* static/style.css */
-
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f9f9f9;
-    margin: 0;
-    padding: 0;
-    color: #333;
-}
-
-h1 {
-    text-align: center;
-    margin-top: 30px;
-    color: #2c3e50;
-}
-
-form {
-    max-width: 600px;
-    margin: 40px auto;
-    padding: 30px;
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-}
-
-.form-group {
-    margin-bottom: 20px;
-}
-
-label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
-}
-
-input[type="text"],
-input[type="number"],
-input[type="radio"] {
-    padding: 10px;
-    width: 100%;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+/* Reset & base */
+* {
     box-sizing: border-box;
 }
-
-input[type="radio"] {
-    width: auto;
-    margin-right: 5px;
+h1 {
+    text-align: center;
+  }
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f9f9f9;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+    line-height: 1.6;
 }
 
-button[type="submit"],
-button {
-    background-color: #3498db;
-    color: white;
-    padding: 12px 24px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 15px;
-    transition: background-color 0.3s ease;
+/* Container for content */
+.container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 15px;
 }
 
-button:hover {
-    background-color: #2980b9;
-}
-
+/* Links at top */
 p a {
-    margin: 0 10px;
-    color: #3498db;
+    color: #007bff;
     text-decoration: none;
+    margin-right: 1rem;
+    font-weight: 600;
 }
-
 p a:hover {
     text-decoration: underline;
 }
 
-.container {
-    text-align: center;
-    margin: 20px;
+/* Headings */
+h1 {
+    font-weight: 700;
+    font-size: 2.25rem;
+    margin-bottom: 1rem;
+    color: #222;
 }
 
-table {
-    border-collapse: collapse;
-    width: 95%;
-    margin: 20px auto;
+/* Buttons */
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.25rem;
+    font-size: 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-weight: 600;
+}
+button:hover {
+    background-color: #0056b3;
+}
+button:focus {
+    outline: 3px solid #80bdff;
+    outline-offset: 2px;
 }
 
-th, td {
-    border: 1px solid #999;
-    padding: 10px;
-    text-align: left;
-    vertical-align: top;
-    white-space: pre-wrap;
-    font-family: monospace;
-}
-
-th {
-    background-color: #eee;
-}
+/* Success container */
 .success-container {
-    max-width: 600px;
-    margin: 80px auto;
-    padding: 40px;
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    max-width: 480px;
+    margin: 2rem auto;
+    background: white;
+    border-radius: 8px;
+    padding: 2rem 2.5rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     text-align: center;
 }
 
 .success-container h1 {
-    color: #2ecc71;
-    font-size: 28px;
-    margin-bottom: 20px;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
 }
 
 .success-container p {
-    font-size: 18px;
-    margin-bottom: 30px;
-}
-
-.success-links a {
-    margin: 0 10px;
+    font-size: 1.1rem;
+    margin-bottom: 1.8rem;
+    color: #444;
 }
 
 .success-links button {
-    background-color: #3498db;
-    color: white;
-    padding: 12px 24px;
-    border: none;
-    border-radius: 5px;
-    font-size: 15px;
+    margin: 0 0.5rem;
+}
+
+/* Form styles */
+form {
+    background: white;
+    padding: 2rem 2.5rem;
+    border-radius: 8px;
+    max-width: 700px;
+    margin: 1rem auto 3rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.form-group {
+    margin-bottom: 1.4rem;
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    color: #222;
     cursor: pointer;
+}
+
+/* Inputs */
+input[type="text"],
+input[type="number"],
+input[type="file"] {
+    padding: 0.6rem 0.8rem;
+    border: 1.5px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+    font-family: inherit;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="file"]:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Checkbox label inline */
+input[type="checkbox"] {
+    margin-right: 0.6rem;
+    transform: scale(1.15);
+    cursor: pointer;
+}
+
+label > input[type="checkbox"] {
+    vertical-align: middle;
+}
+
+/* Radio buttons */
+input[type="radio"] {
+    margin-right: 0.3rem;
+    cursor: pointer;
+}
+
+/* DataTable styling overrides */
+.data-table {
+    width: 100% !important;
+    border-collapse: collapse;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    border-radius: 8px;
+    overflow: hidden;
+    background: white;
+}
+
+.data-table thead tr {
+    background-color: #007bff;
+    color: white;
+    text-align: left;
+    font-weight: 600;
+}
+
+.data-table th,
+.data-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #ddd;
+    vertical-align: middle;
+}
+
+.data-table tbody tr:hover {
+    background-color: #f1f9ff;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+    .container,
+    form,
+    .success-container {
+        padding: 1.5rem;
+        margin: 1rem;
+    }
+    h1 {
+        font-size: 1.75rem;
+    }
+    button {
+        width: 100%;
+        padding: 0.75rem;
+        font-size: 1.1rem;
+    }
+}
+
+/* Navbar styling */
+.navbar {
+    background-color: #007bff;
+    padding: 0.75rem 0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    margin-bottom: 1.5rem;
+}
+
+.nav-container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 15px;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.nav-logo {
+    color: white;
+    font-weight: 700;
+    font-size: 1.25rem;
+    text-decoration: none;
+    flex-grow: 1;
+}
+
+.nav-link {
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 0.35rem 0.75rem;
+    border-radius: 4px;
     transition: background-color 0.3s ease;
 }
 
-.success-links button:hover {
-    background-color: #2980b9;
-}
-
-/* Modern Search Bar Style for DataTables */
-.dataTables_filter {
-    text-align: right;
-    margin-bottom: 20px;
-}
-
-.dataTables_filter label {
-    font-weight: bold;
-    font-size: 16px;
-    color: #333;
-}
-
-.dataTables_filter input {
-    padding: 10px 14px 10px 38px;
-    border: 1px solid #ccc;
-    border-radius: 25px;
-    font-size: 14px;
-    width: 250px;
-    transition: all 0.3s ease;
-    background: #fff url('https://cdn-icons-png.flaticon.com/512/622/622669.png') no-repeat 12px center;
-    background-size: 16px 16px;
-}
-
-.dataTables_filter input:focus {
+.nav-link:hover,
+.nav-link:focus {
+    background-color: rgba(255, 255, 255, 0.25);
     outline: none;
-    border-color: #3498db;
-    box-shadow: 0 0 8px rgba(52, 152, 219, 0.3);
+}
+
+/* Main content spacing */
+.main-content {
+    min-height: 75vh;
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    padding: 1rem 0;
+    font-size: 0.875rem;
+    color: #666;
+}
+
+.video-container {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    padding-top: 25px;
+    height: 0;
+    overflow: hidden;
+    max-width: 100%;
+    margin: 0 auto 20px auto;
+}
+
+.video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group input[type="radio"],
+.form-group input[type="checkbox"] {
+    margin-right: 0.5rem;
+    cursor: pointer;
+}
+
+.form-group label {
+    cursor: pointer;
+}
+
+/* Wrapper to contain both video and form with fixed max width and centering */
+.questionnaire-wrapper {
+    max-width: 700px;      /* match form max-width */
+    margin: 0 auto 3rem auto; /* center horizontally with bottom spacing */
+}
+
+/* Form keeps its padding, but width set to 100% of wrapper */
+form {
+    width: 100%;
+    padding: 2rem 2.5rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    margin: 1rem 0;  /* margin top/bottom inside wrapper */
+    box-sizing: border-box;
+}
+
+/* Video container fills full wrapper width but matches form's inner width by same padding */
+.video-container {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    padding-top: 25px;
+    height: 0;
+    overflow: hidden;
+
+    width: 100%;
+    padding-left: 2.5rem;  /* same horizontal padding as form */
+    padding-right: 2.5rem;
+    box-sizing: border-box;
+    margin-bottom: 1.25rem;
+}
+
+.video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
 }

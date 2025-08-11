@@ -5,10 +5,17 @@ import sqlite3
 from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, send_file
 
+from werkzeug.utils import secure_filename
+
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 DB_NAME = 'questions.db'
+
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'bmp'}
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def init_db():
     with sqlite3.connect(DB_NAME) as conn:
@@ -23,7 +30,7 @@ def init_db():
         c.execute('''
             CREATE TABLE IF NOT EXISTS responses (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                answers TEXT NOT NULL,  -- stored as JSON string
+                answers TEXT NOT NULL,
                 timestamp TEXT NOT NULL
             )
         ''')
@@ -32,25 +39,59 @@ def init_db():
 def form():
     with sqlite3.connect(DB_NAME) as conn:
         c = conn.cursor()
-        c.execute('SELECT id, question, type FROM questions')
+        c.execute('SELECT id, question, type FROM questions ORDER BY id')
         questions = c.fetchall()
 
     if request.method == 'POST':
         answers = {}
+        uploaded_image = None
+        upload_question_id = None
+
         for q in questions:
             qid, question, qtype = q
-            answer = request.form.get(f'q_{qid}', '')
-            answers[question] = answer
+            if question.startswith('종이로 출력 후 TBM을 실시하였다면'):
+                file = request.files.get(f'q_{qid}')
+                if file and file.filename != '':
+                    if allowed_file(file.filename):
+                        file.seek(0, os.SEEK_END)
+                        file_length = file.tell()
+                        file.seek(0)
+                        if file_length > 50 * 1024 * 1024:
+                            return "File size exceeds 50MB limit", 400
+                        filename = secure_filename(file.filename)
+                        save_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                        file.save(save_path)
+                        uploaded_image = filename
+                        upload_question_id = qid
+                        answers[question] = filename
+                    else:
+                        return "Invalid file type", 400
+                else:
+                    answers[question] = request.form.get(f'q_{qid}', '')
+            else:
+                if qid in range(1, 10) and qtype == 'radio':
+                    if uploaded_image:
+                        answer = request.form.get(f'q_{qid}', '')
+                    else:
+                        answer = request.form.get(f'q_{qid}', '')
+                        if not answer:
+                            return f"Question {qid} is required", 400
+                else:
+                    answer = request.form.get(f'q_{qid}', '')
+                    if qtype in ['text', 'number', 'radio'] and not uploaded_image:
+                        if not answer:
+                            return f"Question {qid} is required", 400
+                answers[question] = answer
 
         with sqlite3.connect(DB_NAME) as conn:
             c = conn.cursor()
             timestamp = datetime.utcnow().isoformat(sep=' ', timespec='seconds')
             c.execute(
                 'INSERT INTO responses (answers, timestamp) VALUES (?, ?)',
-                (json.dumps(answers), timestamp)
+                (json.dumps(answers, ensure_ascii=False), timestamp)
             )
             conn.commit()
-        return render_template('success.html')
+        return "success"
 
     return render_template('form.html', questions=questions)
 
@@ -69,9 +110,8 @@ def index():
                     reader = csv.reader(csvfile)
                     for row in reader:
                         if len(row) >= 2:
-                            question = ','.join(row[:-1]).strip()  # Join all but the last as the question
-                            qtype = row[-1].strip()               # Last value is the type
-                            # Optional: clean quotes
+                            question = ','.join(row[:-1]).strip()
+                            qtype = row[-1].strip()
                             question = question.strip('"')
                             c.execute('INSERT INTO questions (question, type) VALUES (?, ?)', (question, qtype))
                 conn.commit()
@@ -85,7 +125,7 @@ def results():
         c.execute('SELECT id, answers, timestamp FROM responses ORDER BY id DESC')
         rows = c.fetchall()
 
-    groups = {}  # keys: frozenset of columns, values: list of responses in that group
+    groups = {}
     for row in rows:
         rid, raw_answers, timestamp = row
         answers = json.loads(raw_answers)
@@ -98,18 +138,14 @@ def results():
             "answers": answers
         })
 
-    # Sort groups by number of responses or creation order (optional)
-    # Here just convert to list of tuples for template:
     grouped_responses = []
     for cols, resps in groups.items():
-        # Sort responses by id ascending
         sorted_resps = sorted(resps, key=lambda r: r['id'])
         grouped_responses.append({
             "columns": sorted(cols),
             "responses": sorted_resps
         })
 
-    # Sort groups by number of responses descending (optional)
     grouped_responses.sort(key=lambda g: len(g['responses']), reverse=True)
 
     return render_template('results.html', grouped_responses=grouped_responses)
@@ -121,7 +157,6 @@ def export_csv():
         c.execute('SELECT answers, timestamp FROM responses ORDER BY id')
         rows = c.fetchall()
 
-    # Collect all headers
     all_rows = []
     all_keys = set()
     for raw_answers, timestamp in rows:
@@ -133,7 +168,7 @@ def export_csv():
     headers = sorted(all_keys) + ['Timestamp']
     csv_path = os.path.join(app.config['UPLOAD_FOLDER'], 'responses_export.csv')
 
-    with open(csv_path, 'w', newline='', encoding='utf-8') as csvfile:
+    with open(csv_path, 'w', newline='', encoding='utf-8-sig') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=headers)
         writer.writeheader()
         for row in all_rows:

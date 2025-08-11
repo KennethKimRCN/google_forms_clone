@@ -1,3 +1,4 @@
+<!-- templates/results.html -->
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -15,11 +16,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-    <h1 style="text-align:center;">📋 전체 응답 보기</h1>
-
+    <p><a href="{{ url_for('form') }}">폼으로 돌아가기</a> | <a href="{{ url_for('index') }}">관리자 업로드</a></p>
+    <h1 style="text-align:center;">전체 응답 보기</h1>
     <div class="container">
         <a href="{{ url_for('export_csv') }}"><button>CSV로 내보내기</button></a>
-        <p><a href="{{ url_for('form') }}">폼으로 돌아가기</a> | <a href="{{ url_for('index') }}">관리자 업로드</a></p>
+
     </div>
 
     {% for group in grouped_responses %}
