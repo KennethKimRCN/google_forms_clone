@@ -1,4 +1,5 @@
 <!-- templates/results.html -->
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -18,9 +19,9 @@
 <body>
     <p><a href="{{ url_for('form') }}">폼으로 돌아가기</a> | <a href="{{ url_for('index') }}">관리자 업로드</a></p>
     <h1 style="text-align:center;">전체 응답 보기</h1>
+
     <div class="container">
         <a href="{{ url_for('export_csv') }}"><button>CSV로 내보내기</button></a>
-
     </div>
 
     {% for group in grouped_responses %}
@@ -28,20 +29,25 @@
             <thead>
                 <tr>
                     <th>ID</th>
+                    <th>Timestamp</th> <!-- Move this line up -->
                     {% for col in group.columns %}
                         <th>{{ col }}</th>
                     {% endfor %}
-                    <th>Timestamp</th>
                 </tr>
             </thead>
             <tbody>
                 {% for r in group.responses %}
                 <tr>
                     <td>{{ r.id }}</td>
-                    {% for col in group.columns %}
-                        <td>{{ r.answers.get(col, '-') }}</td>
-                    {% endfor %}
                     <td>{{ r.timestamp }}</td>
+                    {% for col in group.columns %}
+                        {% set answer = r.answers.get(col, '-') %}
+                        {% if answer != '-' and answer.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.bmp')) %}
+                            <td><a href="{{ url_for('uploaded_file', filename=answer) }}" target="_blank">{{ answer }}</a></td>
+                        {% else %}
+                            <td>{{ answer }}</td>
+                        {% endif %}
+                    {% endfor %}
                 </tr>
                 {% endfor %}
             </tbody>

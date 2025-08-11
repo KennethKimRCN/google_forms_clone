@@ -3,7 +3,7 @@ import json
 import csv
 import sqlite3
 from datetime import datetime
-from flask import Flask, render_template, request, redirect, url_for, send_file
+from flask import Flask, render_template, request, redirect, url_for, send_file, send_from_directory
 
 from werkzeug.utils import secure_filename
 
@@ -34,6 +34,11 @@ def init_db():
                 timestamp TEXT NOT NULL
             )
         ''')
+
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    # Serve uploaded image files
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 @app.route('/', methods=['GET', 'POST'])
 def form():
@@ -122,31 +127,26 @@ def index():
 def results():
     with sqlite3.connect(DB_NAME) as conn:
         c = conn.cursor()
+        c.execute('SELECT question FROM questions ORDER BY id')
+        ordered_columns = [row[0] for row in c.fetchall()]
+
         c.execute('SELECT id, answers, timestamp FROM responses ORDER BY id DESC')
         rows = c.fetchall()
 
-    groups = {}
+    responses = []
     for row in rows:
         rid, raw_answers, timestamp = row
         answers = json.loads(raw_answers)
-        columns = frozenset(answers.keys())
-        if columns not in groups:
-            groups[columns] = []
-        groups[columns].append({
+        responses.append({
             "id": rid,
             "timestamp": timestamp,
             "answers": answers
         })
 
-    grouped_responses = []
-    for cols, resps in groups.items():
-        sorted_resps = sorted(resps, key=lambda r: r['id'])
-        grouped_responses.append({
-            "columns": sorted(cols),
-            "responses": sorted_resps
-        })
-
-    grouped_responses.sort(key=lambda g: len(g['responses']), reverse=True)
+    grouped_responses = [{
+        "columns": ordered_columns,
+        "responses": responses
+    }]
 
     return render_template('results.html', grouped_responses=grouped_responses)
 
@@ -154,24 +154,26 @@ def results():
 def export_csv():
     with sqlite3.connect(DB_NAME) as conn:
         c = conn.cursor()
+        c.execute('SELECT question FROM questions ORDER BY id')
+        ordered_columns = [row[0] for row in c.fetchall()]
+
         c.execute('SELECT answers, timestamp FROM responses ORDER BY id')
         rows = c.fetchall()
 
     all_rows = []
-    all_keys = set()
     for raw_answers, timestamp in rows:
         answers = json.loads(raw_answers)
-        all_keys.update(answers.keys())
         answers['Timestamp'] = timestamp
         all_rows.append(answers)
 
-    headers = sorted(all_keys) + ['Timestamp']
+    headers = ['ID', 'Timestamp'] + ordered_columns
     csv_path = os.path.join(app.config['UPLOAD_FOLDER'], 'responses_export.csv')
 
     with open(csv_path, 'w', newline='', encoding='utf-8-sig') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=headers)
         writer.writeheader()
-        for row in all_rows:
+        for idx, row in enumerate(all_rows, start=1):
+            row['ID'] = idx
             writer.writerow(row)
 
     return send_file(csv_path, as_attachment=True)
