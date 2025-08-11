@@ -3,10 +3,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Success</title>
+    <title>Form Submitted</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-    <h1>Thanks for submitting the form!</h1>
-    <a href="{{ url_for('form') }}">Submit Again</a> | <a href="{{ url_for('results') }}">View Results</a>
+    <div class="success-container">
+        <h1>✅ 제출이 완료되었습니다!</h1>
+        <p>감사합니다. 양식을 성공적으로 제출하였습니다.</p>
+        <div class="success-links">
+            <a href="{{ url_for('form') }}"><button>다시 제출하기</button></a>
+            <a href="{{ url_for('results') }}"><button>결과 보기</button></a>
+        </div>
+    </div>
 </body>
 </html>

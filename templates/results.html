@@ -1,42 +1,29 @@
-<!-- templates/results.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <title>Results</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <style>
-        table {
-            border-collapse: collapse;
-            width: 95%;
-            margin: 20px auto;
-        }
-        th, td {
-            border: 1px solid #999;
-            padding: 10px;
-            text-align: left;
-            vertical-align: top;
-            white-space: pre-wrap;
-            font-family: monospace;
-        }
-        th {
-            background-color: #eee;
-        }
-        .container {
-            text-align: center;
-            margin: 20px;
-        }
-    </style>
+
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
+    <!-- jQuery + DataTables JS -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-    <h1 style="text-align:center;">All Responses</h1>
+    <h1 style="text-align:center;">📋 전체 응답 보기</h1>
+
     <div class="container">
-        <a href="{{ url_for('export_csv') }}"><button>Export to CSV</button></a>
-        <p><a href="{{ url_for('form') }}">Back to Form</a> | <a href="{{ url_for('index') }}">Admin Upload</a></p>
+        <a href="{{ url_for('export_csv') }}"><button>CSV로 내보내기</button></a>
+        <p><a href="{{ url_for('form') }}">폼으로 돌아가기</a> | <a href="{{ url_for('index') }}">관리자 업로드</a></p>
     </div>
 
     {% for group in grouped_responses %}
-        <table>
+        <table class="data-table">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -60,6 +47,31 @@
         </table>
         <br><br>
     {% endfor %}
-</body>
 
+    <script>
+        $(document).ready(function () {
+            $('.data-table').DataTable({
+                paging: true,
+                pageLength: 10,
+                lengthChange: false,
+                ordering: true,
+                info: true,
+                autoWidth: false,
+                language: {
+                    search: "🔍 검색:",
+                    zeroRecords: "일치하는 항목이 없습니다",
+                    info: "총 _TOTAL_개 중 _START_ ~ _END_ 항목 표시",
+                    infoEmpty: "데이터 없음",
+                    infoFiltered: "(전체 _MAX_ 항목 중 필터링됨)",
+                    paginate: {
+                        first: "처음",
+                        last: "마지막",
+                        next: "다음",
+                        previous: "이전"
+                    }
+                }
+            });
+        });
+    </script>
+</body>
 </html>

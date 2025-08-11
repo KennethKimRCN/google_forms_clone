@@ -65,11 +65,14 @@ def index():
             with sqlite3.connect(DB_NAME) as conn:
                 c = conn.cursor()
                 c.execute('DELETE FROM questions')
-                with open(filepath, newline='') as csvfile:
+                with open(filepath, newline='', encoding='utf-8') as csvfile:
                     reader = csv.reader(csvfile)
                     for row in reader:
                         if len(row) >= 2:
-                            question, qtype = row
+                            question = ','.join(row[:-1]).strip()  # Join all but the last as the question
+                            qtype = row[-1].strip()               # Last value is the type
+                            # Optional: clean quotes
+                            question = question.strip('"')
                             c.execute('INSERT INTO questions (question, type) VALUES (?, ?)', (question, qtype))
                 conn.commit()
             return redirect(url_for('form'))

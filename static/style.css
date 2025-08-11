@@ -1,28 +1,167 @@
-body {
-    font-family: Arial, sans-serif;
-    margin: 40px;
-    padding: 0;
-    background: #f2f2f2;
-}
+/* static/style.css */
 
-h1 {
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
     color: #333;
 }
 
+h1 {
+    text-align: center;
+    margin-top: 30px;
+    color: #2c3e50;
+}
+
+form {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
 .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
 }
 
 input[type="text"],
-input[type="number"] {
-    padding: 8px;
-    width: 300px;
+input[type="number"],
+input[type="radio"] {
+    padding: 10px;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
 }
 
+input[type="radio"] {
+    width: auto;
+    margin-right: 5px;
+}
+
+button[type="submit"],
 button {
-    padding: 10px 20px;
-    background-color: #0066cc;
+    background-color: #3498db;
     color: white;
+    padding: 12px 24px;
     border: none;
+    border-radius: 5px;
     cursor: pointer;
+    font-size: 15px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+p a {
+    margin: 0 10px;
+    color: #3498db;
+    text-decoration: none;
+}
+
+p a:hover {
+    text-decoration: underline;
+}
+
+.container {
+    text-align: center;
+    margin: 20px;
+}
+
+table {
+    border-collapse: collapse;
+    width: 95%;
+    margin: 20px auto;
+}
+
+th, td {
+    border: 1px solid #999;
+    padding: 10px;
+    text-align: left;
+    vertical-align: top;
+    white-space: pre-wrap;
+    font-family: monospace;
+}
+
+th {
+    background-color: #eee;
+}
+.success-container {
+    max-width: 600px;
+    margin: 80px auto;
+    padding: 40px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.success-container h1 {
+    color: #2ecc71;
+    font-size: 28px;
+    margin-bottom: 20px;
+}
+
+.success-container p {
+    font-size: 18px;
+    margin-bottom: 30px;
+}
+
+.success-links a {
+    margin: 0 10px;
+}
+
+.success-links button {
+    background-color: #3498db;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 5px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.success-links button:hover {
+    background-color: #2980b9;
+}
+
+/* Modern Search Bar Style for DataTables */
+.dataTables_filter {
+    text-align: right;
+    margin-bottom: 20px;
+}
+
+.dataTables_filter label {
+    font-weight: bold;
+    font-size: 16px;
+    color: #333;
+}
+
+.dataTables_filter input {
+    padding: 10px 14px 10px 38px;
+    border: 1px solid #ccc;
+    border-radius: 25px;
+    font-size: 14px;
+    width: 250px;
+    transition: all 0.3s ease;
+    background: #fff url('https://cdn-icons-png.flaticon.com/512/622/622669.png') no-repeat 12px center;
+    background-size: 16px 16px;
+}
+
+.dataTables_filter input:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 8px rgba(52, 152, 219, 0.3);
 }
